@@ -5,6 +5,13 @@ import re
 from dataclasses import dataclass
 from genlayer import *
 
+@gl.evm.contract_interface
+class _NativeRecipient:
+    class View:
+        pass
+    class Write:
+        pass
+
 # =============================================================================
 # ENTERPRISE PROTOCOL CONFIGURATION
 # =============================================================================
@@ -222,7 +229,8 @@ class LoreProtocol(gl.Contract):
         if entry.status == "APPROVED":
             loan_amount = int(entry.reputation_requested)
             entry.debt = u256(loan_amount + loan_amount // 20)  # 5% interest
-            gl.transfer(entry.creator, loan_amount)
+            if loan_amount > 0:
+                _NativeRecipient(Address(entry.creator)).emit_transfer(value=u256(loan_amount))
         self.proposals[proposal_id] = entry
         
         # Update System Metrics
@@ -255,7 +263,9 @@ class LoreProtocol(gl.Contract):
         debt = int(entry.debt)
         if gl.message.value < debt:
             raise gl.vm.UserError(f"{ERROR_EXPECTED} Insufficient repayment. Need {debt}")
-        gl.transfer(entry.creator, int(entry.collateral))
+        collateral_amount = int(entry.collateral)
+        if collateral_amount > 0:
+            _NativeRecipient(Address(entry.creator)).emit_transfer(value=u256(collateral_amount))
         entry.status = "REPAID"
         entry.debt = u256(0)
         entry.last_updated = u256(int(entry.last_updated) + 1)
@@ -277,7 +287,9 @@ class LoreProtocol(gl.Contract):
         if entry.status == "REVOKED":
             return True # Idempotent
         if entry.status == "PENDING":
-            gl.transfer(entry.creator, int(entry.collateral))
+            collateral_amount = int(entry.collateral)
+            if collateral_amount > 0:
+                _NativeRecipient(Address(entry.creator)).emit_transfer(value=u256(collateral_amount))
         old_status = entry.status
         entry.status = "REVOKED"
         entry.ai_reasoning = "Revoked by creator."
