@@ -35,7 +35,7 @@ export interface ProposalState {
   creator: string;
   reputation_points: number;
   lore_entry: string;
-  state: 'PENDING_EVALUATION' | 'APPROVED' | 'REJECTED' | 'REPAID' | 'REVOKED' | 'FLAGGED';
+  state: 'PENDING' | 'APPROVED' | 'REJECTED' | 'REPAID' | 'REVOKED' | 'FLAGGED';
   narrative: string;
   risk_score: number;
   collateral: string;

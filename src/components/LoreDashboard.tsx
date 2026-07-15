@@ -14,7 +14,7 @@ export const LoreDashboard: React.FC<{ genLayer: ReturnType<typeof useGenLayer> 
   const [selectedProposalId, setSelectedProposalId] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const pendingProposals = genLayer.proposals.filter(p => p.state === 'PENDING_EVALUATION');
+  const pendingProposals = genLayer.proposals.filter(p => p.state === 'PENDING');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -228,8 +228,8 @@ export const LoreDashboard: React.FC<{ genLayer: ReturnType<typeof useGenLayer> 
                         <div className="flex items-center justify-between">
                           <span className="text-base font-mono text-white/90">${prop.reputation_points}</span>
                           
-                          <div className={`px-2 py-0.5 rounded-full text-[7px] font-medium uppercase tracking-widest border
-                            ${prop.state === 'PENDING_EVALUATION' ? 'bg-amber-500/10 border-amber-500/20 text-amber-500' : 
+                          <div className={`px-2 py-0.5 rounded-full text-[8px] font-medium tracking-widest uppercase
+                            ${prop.state === 'PENDING' ? 'bg-amber-500/10 border-amber-500/20 text-amber-500' : 
                               prop.state === 'APPROVED' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 
                               'bg-red-500/10 border-red-500/20 text-red-500'}`}>
                             {prop.state.replace('_', ' ')}
@@ -244,8 +244,8 @@ export const LoreDashboard: React.FC<{ genLayer: ReturnType<typeof useGenLayer> 
                           <p className="text-[10px] text-white/60 leading-relaxed font-light">{prop.lore_entry}</p>
                         </div>
 
-                        {prop.state !== 'PENDING_EVALUATION' && (
-                          <div className="pt-2 border-t border-white/5">
+                        {prop.state !== 'PENDING' && (
+                          <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-2 gap-4">
                             <span className="text-[8px] text-white/40 uppercase tracking-[0.2em] block mb-1 flex items-center gap-1.5">
                               <Zap className="w-2.5 h-2.5" /> Consensus Output
                             </span>
